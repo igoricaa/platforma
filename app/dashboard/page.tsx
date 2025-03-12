@@ -1,22 +1,23 @@
 'use client';
 
-import { useUser } from '@clerk/nextjs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookOpen, Users, CreditCard, TrendingUp } from 'lucide-react';
+import { useSession } from '@/app/auth-client';
+import { BarChart, BookOpen, DollarSign, Users } from 'lucide-react';
 
 export default function DashboardPage() {
-  const { user } = useUser();
+  const { data: session } = useSession();
   
-  // This is a placeholder - in a real app, you'd check the user's role from your database
-  const isCoach = user?.publicMetadata?.role === 'coach';
-
+  // Check if the user is a coach - this would be stored in your database
+  // For now, we'll use a placeholder check
+  const isCoach = session?.user?.email?.includes('coach');
+  
+  // Get the user's name
+  const userName = session?.user?.name || 'User';
+  
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Dashboard</h1>
-      <p className="text-muted-foreground">
-        Welcome back, {user?.firstName || 'User'}!
-      </p>
-
+      <h1 className="text-3xl font-bold">Welcome back, {userName}</h1>
+      
       {isCoach ? <CoachDashboard /> : <UserDashboard />}
     </div>
   );
@@ -57,7 +58,7 @@ function CoachDashboard() {
           </CardHeader>
           <CardContent className="pt-0">
             <div className="flex items-center">
-              <CreditCard className="h-4 w-4 text-muted-foreground mr-1" />
+              <DollarSign className="h-4 w-4 text-muted-foreground mr-1" />
               <span className="text-xs text-muted-foreground">+12% from last month</span>
             </div>
           </CardContent>
@@ -69,7 +70,7 @@ function CoachDashboard() {
           </CardHeader>
           <CardContent className="pt-0">
             <div className="flex items-center">
-              <TrendingUp className="h-4 w-4 text-muted-foreground mr-1" />
+              <BarChart className="h-4 w-4 text-muted-foreground mr-1" />
               <span className="text-xs text-muted-foreground">+2.1% from last month</span>
             </div>
           </CardContent>
@@ -180,7 +181,7 @@ function UserDashboard() {
           </CardHeader>
           <CardContent className="pt-0">
             <div className="flex items-center">
-              <TrendingUp className="h-4 w-4 text-muted-foreground mr-1" />
+              <BarChart className="h-4 w-4 text-muted-foreground mr-1" />
               <span className="text-xs text-muted-foreground">+8 from last week</span>
             </div>
           </CardContent>

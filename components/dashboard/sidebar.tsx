@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { useUser } from '@clerk/nextjs';
+import { useSession } from '@/app/auth-client';
 
 const coachRoutes = [
   {
@@ -79,10 +79,11 @@ const userRoutes = [
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { user } = useUser();
+  const { data: session } = useSession();
   
-  // This is a placeholder - in a real app, you'd check the user's role from your database
-  const isCoach = user?.publicMetadata?.role === 'coach';
+  // Check the user's role - this would be stored in your database
+  // For now, we'll use a placeholder check
+  const isCoach = session?.user?.email?.includes('coach');
   
   const routes = isCoach ? coachRoutes : userRoutes;
 

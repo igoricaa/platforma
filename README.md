@@ -31,8 +31,8 @@ A comprehensive platform for strength and conditioning coaches to create, share,
 ### Prerequisites
 
 - Node.js 18+ and pnpm
-- MongoDB instance (local or Atlas)
-- Clerk account for authentication
+- PostgreSQL database (local or Neon)
+- Better Auth setup
 - Stripe account for payments
 
 ### Installation
@@ -50,7 +50,7 @@ A comprehensive platform for strength and conditioning coaches to create, share,
 
 3. Set up environment variables:
    - Copy `.env.local.example` to `.env.local`
-   - Fill in your MongoDB, Clerk, and Stripe credentials
+   - Fill in your PostgreSQL, Better Auth, and Stripe credentials
 
 4. Run the development server:
    ```bash

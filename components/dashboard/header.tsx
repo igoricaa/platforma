@@ -1,12 +1,23 @@
 'use client';
 
-import { UserButton, useUser } from '@clerk/nextjs';
-import { Bell, Search } from 'lucide-react';
+import { Bell, Search, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useSession, signOut } from '@/app/auth-client';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from '@/components/ui/dropdown-menu';
 
 export function DashboardHeader() {
-  const { user } = useUser();
+  const { data: session } = useSession();
+  
+  const handleSignOut = async () => {
+    await signOut();
+  };
 
   return (
     <header className="h-16 border-b bg-background flex items-center px-6">
@@ -26,10 +37,29 @@ export function DashboardHeader() {
         </Button>
         <div className="flex items-center gap-2">
           <div className="text-sm hidden md:block">
-            <p className="font-medium">{user?.fullName || 'User'}</p>
-            <p className="text-xs text-muted-foreground">{user?.primaryEmailAddress?.emailAddress}</p>
+            <p className="font-medium">{session?.user?.name || 'User'}</p>
+            <p className="text-xs text-muted-foreground">{session?.user?.email}</p>
           </div>
-          <UserButton afterSignOutUrl="/" />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={session?.user?.image || ''} alt={session?.user?.name || 'User'} />
+                  <AvatarFallback>
+                    <User className="h-4 w-4" />
+                  </AvatarFallback>
+                </Avatar>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem className="font-medium">
+                {session?.user?.name || 'User'}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleSignOut}>
+                Sign Out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </header>
