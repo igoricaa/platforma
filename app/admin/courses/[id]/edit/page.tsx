@@ -5,8 +5,16 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 
-export default async function EditCoursePage({ params }: { params: { id: string } }) {
-  const courseId = parseInt(params.id, 10);
+// Add dynamic rendering to prevent prerendering during build
+export const dynamic = 'force-dynamic';
+
+export default async function EditCoursePage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const resolvedParams = await params;
+  const courseId = parseInt(resolvedParams.id, 10);
   
   // Fetch the course to edit
   const course = await db.query.courses.findFirst({

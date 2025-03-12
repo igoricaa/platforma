@@ -1,7 +1,7 @@
 import { betterAuth } from 'better-auth';
 import { Pool } from '@neondatabase/serverless';
 import { db } from '../db';
-import { users } from '../db/schema';
+import { users, userRoleEnum } from '../db/schema';
 import { eq } from 'drizzle-orm';
 import bcrypt from 'bcrypt';
 
@@ -36,7 +36,7 @@ export const auth = betterAuth({
             email,
             password: hashedPassword,
             name,
-            role: role as any,
+            role: role as 'admin' | 'user' | 'coach',
           })
           .returning();
 
@@ -75,6 +75,7 @@ export const auth = betterAuth({
       },
     },
   },
+  // TODO: add social providers - https://www.better-auth.com/docs/installation#authentication-methods
   // Add two-factor authentication
   twoFactor: {
     enabled: true,

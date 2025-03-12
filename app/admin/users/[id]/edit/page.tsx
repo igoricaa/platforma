@@ -6,8 +6,16 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { hash } from 'bcrypt';
 
-export default async function EditUserPage({ params }: { params: { id: string } }) {
-  const userId = parseInt(params.id, 10);
+// Add dynamic rendering to prevent prerendering during build
+export const dynamic = 'force-dynamic';
+
+export default async function EditUserPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const resolvedParams = await params;
+  const userId = parseInt(resolvedParams.id, 10);
   
   // Fetch the user to edit
   const user = await db.query.users.findFirst({

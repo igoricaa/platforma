@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useSession } from '@/app/auth-client';
+import { useSession } from '@/lib/auth-client';
 import { BarChart, BookOpen, DollarSign, Users } from 'lucide-react';
 
 export default function DashboardPage() {

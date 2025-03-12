@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useSession, signOut } from '@/app/auth-client';
+import { useSession, signOut } from '@/lib/auth-client';
 import { Button } from '@/components/ui/button';
 import { usePathname } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -27,7 +27,7 @@ export function Navbar() {
 
   return (
     <nav className="border-b bg-background h-16 fixed w-full z-50">
-      <div className="container h-full flex items-center justify-between">
+      <div className="container mx-auto h-full flex items-center justify-between">
         <div className="flex items-center gap-6">
           <Link href="/" className="text-xl font-bold">
             S&C Platform

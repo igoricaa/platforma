@@ -1,3 +1,6 @@
+// Add dynamic rendering to the top of the file
+export const dynamic = 'force-dynamic';
+
 import { db } from '@/db';
 import { users, courses, purchases, subscriptions } from '@/db/schema';
 import { count, eq } from 'drizzle-orm';

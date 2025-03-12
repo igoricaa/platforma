@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { BookOpen, Users, Star, CreditCard } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 // This is a placeholder - in a real app, you'd fetch the coach data from your API
 const coachData = {
@@ -44,7 +45,34 @@ const coachData = {
   ],
 };
 
-export default function CoachProfilePage({ params }: { params: { id: string } }) {
+export default function CoachProfilePage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const [coachId, setCoachId] = useState<string | null>(null);
+  
+  useEffect(() => {
+    // Resolve the params promise
+    const resolveParams = async () => {
+      try {
+        const resolvedParams = await params;
+        setCoachId(resolvedParams.id);
+      } catch (error) {
+        console.error('Error resolving params:', error);
+      }
+    };
+    
+    resolveParams();
+  }, [params]);
+  
+  if (!coachId) {
+    return <div>Loading...</div>;
+  }
+  
+  // In a real app, you'd fetch the coach data based on the ID
+  // For now, we'll use the placeholder data
+  
   return (
     <div className="space-y-6">
       <Card>

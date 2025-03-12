@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { useSession } from '@/app/auth-client';
+import { useSession } from '@/lib/auth-client';
 
 const coachRoutes = [
   {

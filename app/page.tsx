@@ -7,7 +7,7 @@ export default function Home() {
     <MainLayout>
       {/* Hero Section */}
       <section className="py-20 md:py-28">
-        <div className="container">
+        <div className="container mx-auto">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
               Elevate Your Strength & Conditioning Coaching
@@ -29,7 +29,7 @@ export default function Home() {
 
       {/* Features Section */}
       <section className="py-20 bg-muted/50">
-        <div className="container">
+        <div className="container mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold mb-4">Platform Features</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -79,7 +79,7 @@ export default function Home() {
 
       {/* CTA Section */}
       <section className="py-20">
-        <div className="container">
+        <div className="container mx-auto">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-3xl font-bold mb-4">Ready to Start Your Coaching Journey?</h2>
             <p className="text-muted-foreground mb-8">

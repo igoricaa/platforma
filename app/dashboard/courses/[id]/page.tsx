@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BookOpen, Users, Clock, Calendar } from 'lucide-react';
@@ -64,10 +64,44 @@ const courseData = {
   ],
 };
 
-export default function CoursePage({ params }: { params: { id: string } }) {
-  const [activeModule, setActiveModule] = useState(courseData.modules[0].id);
-  const [activeLesson, setActiveLesson] = useState(courseData.modules[0].lessons[0].id);
-
+export default function CoursePage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const [courseId, setCourseId] = useState<string | null>(null);
+  const [activeModule, setActiveModule] = useState('');
+  const [activeLesson, setActiveLesson] = useState('');
+  
+  useEffect(() => {
+    // Resolve the params promise
+    const resolveParams = async () => {
+      try {
+        const resolvedParams = await params;
+        setCourseId(resolvedParams.id);
+        
+        // Initialize active module and lesson once we have the course data
+        if (courseData.modules.length > 0) {
+          setActiveModule(courseData.modules[0].id);
+          if (courseData.modules[0].lessons.length > 0) {
+            setActiveLesson(courseData.modules[0].lessons[0].id);
+          }
+        }
+      } catch (error) {
+        console.error('Error resolving params:', error);
+      }
+    };
+    
+    resolveParams();
+  }, [params]);
+  
+  if (!courseId) {
+    return <div>Loading...</div>;
+  }
+  
+  // In a real app, you'd fetch the course data based on the ID
+  // For now, we'll use the placeholder data
+  
   const currentModule = courseData.modules.find(module => module.id === activeModule);
   const currentLesson = currentModule?.lessons.find(lesson => lesson.id === activeLesson);
 

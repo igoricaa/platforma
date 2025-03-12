@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { redirect } from 'next/navigation';
 import { Sidebar } from '@/components/dashboard/sidebar';
 import { DashboardHeader } from '@/components/dashboard/header';
-import { useSession } from '@/app/auth-client';
+import { useSession } from '@/lib/auth-client';
 
 export default function DashboardLayout({
   children,

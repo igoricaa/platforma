@@ -1,3 +1,6 @@
+// Add dynamic rendering to the top of the file
+export const dynamic = 'force-dynamic';
+
 import { db } from '@/db';
 import { coaches, categories, courses } from '@/db/schema';
 import Link from 'next/link';
