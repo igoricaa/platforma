@@ -6,7 +6,7 @@ declare module 'better-auth/react' {
       id: string;
       name: string;
       email: string;
-      emailVerified: boolean;
+      emailVerified?: boolean;
       createdAt: Date;
       updatedAt: Date;
       image?: string | null;

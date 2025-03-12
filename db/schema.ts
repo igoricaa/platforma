@@ -1,25 +1,84 @@
-import { pgTable, serial, text, varchar, timestamp, integer, boolean, json, pgEnum } from 'drizzle-orm/pg-core';
+import {
+  pgTable,
+  serial,
+  text,
+  varchar,
+  timestamp,
+  integer,
+  boolean,
+  json,
+  pgEnum,
+} from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
 // Enums
 export const userRoleEnum = pgEnum('user_role', ['admin', 'user', 'coach']);
-export const subscriptionStatusEnum = pgEnum('subscription_status', ['active', 'cancelled', 'expired']);
+export const subscriptionStatusEnum = pgEnum('subscription_status', [
+  'active',
+  'cancelled',
+  'expired',
+]);
 
 // Users table
 export const users = pgTable('users', {
-  id: serial('id').primaryKey(),
+  id: varchar('id', { length: 255 }).primaryKey(),
   email: varchar('email', { length: 255 }).notNull().unique(),
-  password: varchar('password', { length: 255 }).notNull(),
+  emailVerified: boolean('email_verified').notNull().default(false),
   name: varchar('name', { length: 255 }).notNull(),
   role: userRoleEnum('role').notNull().default('user'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
+// Sessions table (required by Better Auth)
+export const sessions = pgTable('sessions', {
+  id: varchar('id', { length: 255 }).primaryKey(),
+  userId: varchar('user_id')
+    .references(() => users.id)
+    .notNull(),
+  token: varchar('token', { length: 255 }).notNull(),
+  expiresAt: timestamp('expires_at').notNull(),
+  ipAddress: varchar('ip_address', { length: 255 }),
+  userAgent: varchar('user_agent', { length: 255 }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+// Accounts table (required by Better Auth)
+export const accounts = pgTable('accounts', {
+  id: varchar('id', { length: 255 }).primaryKey(),
+  userId: varchar('user_id')
+    .references(() => users.id)
+    .notNull(),
+  accountId: varchar('account_id', { length: 255 }).notNull(),
+  providerId: varchar('provider_id', { length: 255 }).notNull(),
+  accessToken: text('access_token'),
+  refreshToken: text('refresh_token'),
+  accessTokenExpiresAt: timestamp('access_token_expires_at'),
+  refreshTokenExpiresAt: timestamp('refresh_token_expires_at'),
+  scope: varchar('scope', { length: 255 }),
+  idToken: text('id_token'),
+  password: varchar('password', { length: 255 }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+// Verifications table (required by Better Auth)
+export const verifications = pgTable('verifications', {
+  id: varchar('id', { length: 255 }).primaryKey(),
+  identifier: varchar('identifier', { length: 255 }).notNull(),
+  value: varchar('value', { length: 255 }).notNull(),
+  expiresAt: timestamp('expires_at').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
 // Coaches table
 export const coaches = pgTable('coaches', {
-  id: serial('id').primaryKey(),
-  userId: integer('user_id').references(() => users.id).notNull(),
+  id: varchar('id', { length: 255 }).primaryKey(),
+  userId: varchar('user_id')
+    .references(() => users.id)
+    .notNull(),
   name: varchar('name', { length: 255 }).notNull(),
   bio: text('bio').notNull(),
   profileImageUrl: varchar('profile_image_url', { length: 255 }).notNull(),
@@ -32,8 +91,10 @@ export const coaches = pgTable('coaches', {
 
 // Coach specialties table
 export const coachSpecialties = pgTable('coach_specialties', {
-  id: serial('id').primaryKey(),
-  coachId: integer('coach_id').references(() => coaches.id).notNull(),
+  id: varchar('id').primaryKey(),
+  coachId: varchar('coach_id')
+    .references(() => coaches.id)
+    .notNull(),
   specialty: varchar('specialty', { length: 255 }).notNull(),
 });
 
@@ -54,8 +115,12 @@ export const courses = pgTable('courses', {
   description: text('description').notNull(),
   thumbnailUrl: varchar('thumbnail_url', { length: 255 }).notNull(),
   price: integer('price').notNull(),
-  coachId: integer('coach_id').references(() => coaches.id).notNull(),
-  categoryId: integer('category_id').references(() => categories.id).notNull(),
+  coachId: varchar('coach_id')
+    .references(() => coaches.id)
+    .notNull(),
+  categoryId: integer('category_id')
+    .references(() => categories.id)
+    .notNull(),
   stripeProductId: varchar('stripe_product_id', { length: 255 }),
   stripePriceId: varchar('stripe_price_id', { length: 255 }),
   createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -65,7 +130,9 @@ export const courses = pgTable('courses', {
 // Course modules table
 export const courseModules = pgTable('course_modules', {
   id: serial('id').primaryKey(),
-  courseId: integer('course_id').references(() => courses.id).notNull(),
+  courseId: integer('course_id')
+    .references(() => courses.id)
+    .notNull(),
   title: varchar('title', { length: 255 }).notNull(),
   description: text('description'),
   order: integer('order').notNull(),
@@ -74,7 +141,9 @@ export const courseModules = pgTable('course_modules', {
 // Course lessons table
 export const courseLessons = pgTable('course_lessons', {
   id: serial('id').primaryKey(),
-  moduleId: integer('module_id').references(() => courseModules.id).notNull(),
+  moduleId: integer('module_id')
+    .references(() => courseModules.id)
+    .notNull(),
   title: varchar('title', { length: 255 }).notNull(),
   description: text('description'),
   videoUrl: varchar('video_url', { length: 255 }).notNull(),
@@ -85,8 +154,12 @@ export const courseLessons = pgTable('course_lessons', {
 // Purchases table
 export const purchases = pgTable('purchases', {
   id: serial('id').primaryKey(),
-  userId: integer('user_id').references(() => users.id).notNull(),
-  courseId: integer('course_id').references(() => courses.id).notNull(),
+  userId: varchar('user_id')
+    .references(() => users.id)
+    .notNull(),
+  courseId: integer('course_id')
+    .references(() => courses.id)
+    .notNull(),
   purchaseDate: timestamp('purchase_date').notNull(),
   amount: integer('amount').notNull(),
   stripePaymentIntentId: varchar('stripe_payment_intent_id', { length: 255 }),
@@ -96,8 +169,12 @@ export const purchases = pgTable('purchases', {
 // Subscriptions table
 export const subscriptions = pgTable('subscriptions', {
   id: serial('id').primaryKey(),
-  userId: integer('user_id').references(() => users.id).notNull(),
-  coachId: integer('coach_id').references(() => coaches.id).notNull(),
+  userId: varchar('user_id')
+    .references(() => users.id)
+    .notNull(),
+  coachId: varchar('coach_id')
+    .references(() => coaches.id)
+    .notNull(),
   startDate: timestamp('start_date').notNull(),
   endDate: timestamp('end_date'),
   status: subscriptionStatusEnum('status').notNull().default('active'),
@@ -147,13 +224,16 @@ export const coursesRelations = relations(courses, ({ one, many }) => ({
   purchases: many(purchases),
 }));
 
-export const courseModulesRelations = relations(courseModules, ({ one, many }) => ({
-  course: one(courses, {
-    fields: [courseModules.courseId],
-    references: [courses.id],
-  }),
-  lessons: many(courseLessons),
-}));
+export const courseModulesRelations = relations(
+  courseModules,
+  ({ one, many }) => ({
+    course: one(courses, {
+      fields: [courseModules.courseId],
+      references: [courses.id],
+    }),
+    lessons: many(courseLessons),
+  })
+);
 
 export const courseLessonsRelations = relations(courseLessons, ({ one }) => ({
   module: one(courseModules, {
@@ -184,9 +264,12 @@ export const subscriptionsRelations = relations(subscriptions, ({ one }) => ({
   }),
 }));
 
-export const coachSpecialtiesRelations = relations(coachSpecialties, ({ one }) => ({
-  coach: one(coaches, {
-    fields: [coachSpecialties.coachId],
-    references: [coaches.id],
-  }),
-})); 
+export const coachSpecialtiesRelations = relations(
+  coachSpecialties,
+  ({ one }) => ({
+    coach: one(coaches, {
+      fields: [coachSpecialties.coachId],
+      references: [coaches.id],
+    }),
+  })
+);

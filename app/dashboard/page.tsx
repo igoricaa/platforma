@@ -1,23 +1,40 @@
-'use client';
+// 'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Suspense } from 'react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { useSession } from '@/lib/auth-client';
-import { BarChart, BookOpen, DollarSign, Users } from 'lucide-react';
+import { BarChart, BookOpen, DollarSign, Users, Loader2 } from 'lucide-react';
+import { redirect } from 'next/navigation';
+import { headers } from 'next/headers';
+import { auth } from '@/lib/auth';
 
-export default function DashboardPage() {
-  const { data: session } = useSession();
-  
-  // Check if the user is a coach - this would be stored in your database
-  // For now, we'll use a placeholder check
+async function DashboardContent() {
+  // const { data: session } = useSession();
+
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  if (!session || !session.user) {
+    throw redirect('/sign-in');
+  }
+
+  // Check if the user is a coach based on role
+  // For now, we'll use a placeholder check since the role might not be available
   const isCoach = session?.user?.email?.includes('coach');
-  
+
   // Get the user's name
   const userName = session?.user?.name || 'User';
-  
+
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Welcome back, {userName}</h1>
-      
+    <div className='space-y-6'>
+      <h1 className='text-3xl font-bold'>Welcome back, {userName}</h1>
+
       {isCoach ? <CoachDashboard /> : <UserDashboard />}
     </div>
   );
@@ -25,82 +42,90 @@ export default function DashboardPage() {
 
 function CoachDashboard() {
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className='space-y-6'>
+      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
         <Card>
-          <CardHeader className="pb-2">
+          <CardHeader className='pb-2'>
             <CardDescription>Total Courses</CardDescription>
-            <CardTitle className="text-3xl">12</CardTitle>
+            <CardTitle className='text-3xl'>12</CardTitle>
           </CardHeader>
-          <CardContent className="pt-0">
-            <div className="flex items-center">
-              <BookOpen className="h-4 w-4 text-muted-foreground mr-1" />
-              <span className="text-xs text-muted-foreground">2 published this month</span>
+          <CardContent className='pt-0'>
+            <div className='flex items-center'>
+              <BookOpen className='h-4 w-4 text-muted-foreground mr-1' />
+              <span className='text-xs text-muted-foreground'>
+                2 published this month
+              </span>
             </div>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2">
+          <CardHeader className='pb-2'>
             <CardDescription>Total Students</CardDescription>
-            <CardTitle className="text-3xl">248</CardTitle>
+            <CardTitle className='text-3xl'>248</CardTitle>
           </CardHeader>
-          <CardContent className="pt-0">
-            <div className="flex items-center">
-              <Users className="h-4 w-4 text-muted-foreground mr-1" />
-              <span className="text-xs text-muted-foreground">+18% from last month</span>
+          <CardContent className='pt-0'>
+            <div className='flex items-center'>
+              <Users className='h-4 w-4 text-muted-foreground mr-1' />
+              <span className='text-xs text-muted-foreground'>
+                +18% from last month
+              </span>
             </div>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2">
+          <CardHeader className='pb-2'>
             <CardDescription>Revenue</CardDescription>
-            <CardTitle className="text-3xl">$4,256</CardTitle>
+            <CardTitle className='text-3xl'>$4,256</CardTitle>
           </CardHeader>
-          <CardContent className="pt-0">
-            <div className="flex items-center">
-              <DollarSign className="h-4 w-4 text-muted-foreground mr-1" />
-              <span className="text-xs text-muted-foreground">+12% from last month</span>
+          <CardContent className='pt-0'>
+            <div className='flex items-center'>
+              <DollarSign className='h-4 w-4 text-muted-foreground mr-1' />
+              <span className='text-xs text-muted-foreground'>
+                +12% from last month
+              </span>
             </div>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2">
+          <CardHeader className='pb-2'>
             <CardDescription>Conversion Rate</CardDescription>
-            <CardTitle className="text-3xl">5.2%</CardTitle>
+            <CardTitle className='text-3xl'>5.2%</CardTitle>
           </CardHeader>
-          <CardContent className="pt-0">
-            <div className="flex items-center">
-              <BarChart className="h-4 w-4 text-muted-foreground mr-1" />
-              <span className="text-xs text-muted-foreground">+2.1% from last month</span>
+          <CardContent className='pt-0'>
+            <div className='flex items-center'>
+              <BarChart className='h-4 w-4 text-muted-foreground mr-1' />
+              <span className='text-xs text-muted-foreground'>
+                +2.1% from last month
+              </span>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
         <Card>
           <CardHeader>
             <CardTitle>Recent Sales</CardTitle>
-            <CardDescription>
-              Your most recent course purchases
-            </CardDescription>
+            <CardDescription>Your most recent course purchases</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
+            <div className='space-y-4'>
               {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center">
-                      <Users className="h-5 w-5 text-muted-foreground" />
+                <div key={i} className='flex items-center justify-between'>
+                  <div className='flex items-center gap-3'>
+                    <div className='h-10 w-10 rounded-full bg-muted flex items-center justify-center'>
+                      <Users className='h-5 w-5 text-muted-foreground' />
                     </div>
                     <div>
-                      <p className="text-sm font-medium">User {i}</p>
-                      <p className="text-xs text-muted-foreground">user{i}@example.com</p>
+                      <p className='text-sm font-medium'>User {i}</p>
+                      <p className='text-xs text-muted-foreground'>
+                        user{i}@example.com
+                      </p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm font-medium">$99.00</p>
-                    <p className="text-xs text-muted-foreground">
+                  <div className='text-right'>
+                    <p className='text-sm font-medium'>$99.00</p>
+                    <p className='text-xs text-muted-foreground'>
                       {new Date().toLocaleDateString()}
                     </p>
                   </div>
@@ -118,23 +143,23 @@ function CoachDashboard() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
+            <div className='space-y-4'>
               {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded bg-muted flex items-center justify-center">
-                      <BookOpen className="h-5 w-5 text-muted-foreground" />
+                <div key={i} className='flex items-center justify-between'>
+                  <div className='flex items-center gap-3'>
+                    <div className='h-10 w-10 rounded bg-muted flex items-center justify-center'>
+                      <BookOpen className='h-5 w-5 text-muted-foreground' />
                     </div>
                     <div>
-                      <p className="text-sm font-medium">Course {i}</p>
-                      <p className="text-xs text-muted-foreground">{50 - i * 5} students</p>
+                      <p className='text-sm font-medium'>Course {i}</p>
+                      <p className='text-xs text-muted-foreground'>
+                        {50 - i * 5} students
+                      </p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm font-medium">${99 - i * 10}.00</p>
-                    <p className="text-xs text-muted-foreground">
-                      {i} modules
-                    </p>
+                  <div className='text-right'>
+                    <p className='text-sm font-medium'>${99 - i * 10}.00</p>
+                    <p className='text-xs text-muted-foreground'>{i} modules</p>
                   </div>
                 </div>
               ))}
@@ -148,41 +173,47 @@ function CoachDashboard() {
 
 function UserDashboard() {
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className='space-y-6'>
+      <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
         <Card>
-          <CardHeader className="pb-2">
+          <CardHeader className='pb-2'>
             <CardDescription>Enrolled Courses</CardDescription>
-            <CardTitle className="text-3xl">5</CardTitle>
+            <CardTitle className='text-3xl'>5</CardTitle>
           </CardHeader>
-          <CardContent className="pt-0">
-            <div className="flex items-center">
-              <BookOpen className="h-4 w-4 text-muted-foreground mr-1" />
-              <span className="text-xs text-muted-foreground">2 added this month</span>
+          <CardContent className='pt-0'>
+            <div className='flex items-center'>
+              <BookOpen className='h-4 w-4 text-muted-foreground mr-1' />
+              <span className='text-xs text-muted-foreground'>
+                2 added this month
+              </span>
             </div>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2">
+          <CardHeader className='pb-2'>
             <CardDescription>Subscribed Coaches</CardDescription>
-            <CardTitle className="text-3xl">3</CardTitle>
+            <CardTitle className='text-3xl'>3</CardTitle>
           </CardHeader>
-          <CardContent className="pt-0">
-            <div className="flex items-center">
-              <Users className="h-4 w-4 text-muted-foreground mr-1" />
-              <span className="text-xs text-muted-foreground">1 new this month</span>
+          <CardContent className='pt-0'>
+            <div className='flex items-center'>
+              <Users className='h-4 w-4 text-muted-foreground mr-1' />
+              <span className='text-xs text-muted-foreground'>
+                1 new this month
+              </span>
             </div>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2">
+          <CardHeader className='pb-2'>
             <CardDescription>Completed Lessons</CardDescription>
-            <CardTitle className="text-3xl">24</CardTitle>
+            <CardTitle className='text-3xl'>24</CardTitle>
           </CardHeader>
-          <CardContent className="pt-0">
-            <div className="flex items-center">
-              <BarChart className="h-4 w-4 text-muted-foreground mr-1" />
-              <span className="text-xs text-muted-foreground">+8 from last week</span>
+          <CardContent className='pt-0'>
+            <div className='flex items-center'>
+              <BarChart className='h-4 w-4 text-muted-foreground mr-1' />
+              <span className='text-xs text-muted-foreground'>
+                +8 from last week
+              </span>
             </div>
           </CardContent>
         </Card>
@@ -191,23 +222,23 @@ function UserDashboard() {
       <Card>
         <CardHeader>
           <CardTitle>Continue Learning</CardTitle>
-          <CardDescription>
-            Pick up where you left off
-          </CardDescription>
+          <CardDescription>Pick up where you left off</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
+          <div className='space-y-4'>
             {[1, 2, 3].map((i) => (
-              <div key={i} className="flex items-center gap-4">
-                <div className="h-16 w-24 rounded bg-muted flex items-center justify-center">
-                  <BookOpen className="h-6 w-6 text-muted-foreground" />
+              <div key={i} className='flex items-center gap-4'>
+                <div className='h-16 w-24 rounded bg-muted flex items-center justify-center'>
+                  <BookOpen className='h-6 w-6 text-muted-foreground' />
                 </div>
-                <div className="flex-1">
-                  <h3 className="text-sm font-medium">Course {i}</h3>
-                  <p className="text-xs text-muted-foreground">Module {i}, Lesson {i * 2}</p>
-                  <div className="mt-2 h-1.5 w-full bg-muted rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-primary rounded-full" 
+                <div className='flex-1'>
+                  <h3 className='text-sm font-medium'>Course {i}</h3>
+                  <p className='text-xs text-muted-foreground'>
+                    Module {i}, Lesson {i * 2}
+                  </p>
+                  <div className='mt-2 h-1.5 w-full bg-muted rounded-full overflow-hidden'>
+                    <div
+                      className='h-full bg-primary rounded-full'
                       style={{ width: `${30 + i * 20}%` }}
                     ></div>
                   </div>
@@ -226,20 +257,22 @@ function UserDashboard() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
             {[1, 2, 3].map((i) => (
-              <div key={i} className="rounded-lg border overflow-hidden">
-                <div className="h-32 bg-muted flex items-center justify-center">
-                  <BookOpen className="h-8 w-8 text-muted-foreground" />
+              <div key={i} className='rounded-lg border overflow-hidden'>
+                <div className='h-32 bg-muted flex items-center justify-center'>
+                  <BookOpen className='h-8 w-8 text-muted-foreground' />
                 </div>
-                <div className="p-4">
-                  <h3 className="font-medium">Recommended Course {i}</h3>
-                  <p className="text-sm text-muted-foreground mt-1">
+                <div className='p-4'>
+                  <h3 className='font-medium'>Recommended Course {i}</h3>
+                  <p className='text-sm text-muted-foreground mt-1'>
                     Coach {i}
                   </p>
-                  <div className="mt-3 flex items-center justify-between">
-                    <span className="text-sm font-medium">${49 + i * 10}</span>
-                    <span className="text-xs text-muted-foreground">{3 + i} modules</span>
+                  <div className='mt-3 flex items-center justify-between'>
+                    <span className='text-sm font-medium'>${49 + i * 10}</span>
+                    <span className='text-xs text-muted-foreground'>
+                      {3 + i} modules
+                    </span>
                   </div>
                 </div>
               </div>
@@ -249,4 +282,52 @@ function UserDashboard() {
       </Card>
     </div>
   );
-} 
+}
+
+// Dashboard loading skeleton
+function DashboardSkeleton() {
+  return (
+    <div className='space-y-6'>
+      <div className='h-10 w-64 bg-gray-200 rounded animate-pulse'></div>
+
+      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className='bg-white shadow rounded-lg p-6'>
+            <div className='animate-pulse space-y-4'>
+              <div className='h-4 bg-gray-200 rounded w-1/2'></div>
+              <div className='h-8 bg-gray-200 rounded w-1/4'></div>
+              <div className='h-4 bg-gray-200 rounded w-3/4'></div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
+        {[...Array(2)].map((_, i) => (
+          <div key={i} className='bg-white shadow rounded-lg p-6'>
+            <div className='animate-pulse space-y-4'>
+              <div className='h-6 bg-gray-200 rounded w-1/3'></div>
+              <div className='h-4 bg-gray-200 rounded w-1/2'></div>
+              <div className='space-y-3 mt-6'>
+                {[...Array(5)].map((_, j) => (
+                  <div key={j} className='flex justify-between'>
+                    <div className='h-10 bg-gray-200 rounded w-1/2'></div>
+                    <div className='h-10 bg-gray-200 rounded w-1/4'></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={<DashboardSkeleton />}>
+      <DashboardContent />
+    </Suspense>
+  );
+}
