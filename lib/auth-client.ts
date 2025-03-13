@@ -6,7 +6,7 @@ import { auth } from './auth';
 
 // Create a Better Auth client
 export const authClient = createAuthClient({
-  baseURL: process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
+  baseURL: process.env.NEXT_PUBLIC_SERVER_URL || 'https://platforma-nine.vercel.app/',
   plugins: [inferAdditionalFields<typeof auth>()],
 });
 

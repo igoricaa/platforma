@@ -20,9 +20,9 @@ async function DashboardContent() {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
-  if (!session || !session.user) {
-    throw redirect('/sign-in');
-  }
+  // if (!session || !session.user) {
+  //   throw redirect('/sign-in');
+  // }
 
   // Check if the user is a coach based on role
   // For now, we'll use a placeholder check since the role might not be available

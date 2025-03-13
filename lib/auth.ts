@@ -27,7 +27,9 @@ export const auth = betterAuth({
     },
   },
   plugins: [nextCookies()], // make sure this is the last plugin in the array
-
+  // advanced: {
+  //   useSecureCookies: process.env.NODE_ENV === 'production',
+  // },
   // Enable two-factor authentication if needed
   twoFactor: {
     enabled: false, // Set to true when you're ready to use it
