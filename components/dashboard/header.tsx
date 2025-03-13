@@ -22,7 +22,6 @@ export function DashboardHeader() {
       fetchOptions: {
         onSuccess: () => {
           router.push('/sign-in');
-          // router.refresh();
         },
       },
     });

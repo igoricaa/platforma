@@ -1,25 +1,36 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getSessionCookie } from 'better-auth/cookies';
+import { auth } from './lib/auth';
+import { headers } from 'next/headers';
 
-export function middleware(request: NextRequest) {
-  const sessionCookie = getSessionCookie(request, {
-    // Optionally pass config if cookie name, prefix or useSecureCookies option is customized in auth config.
-    // cookieName: 'session_token',
-    // cookiePrefix: 'better-auth',
-    // useSecureCookies: true,
+export async function middleware(request: NextRequest) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
   });
 
-  if (!sessionCookie) {
+  if (!session || !session.user) {
     return NextResponse.redirect(new URL('/sign-in', request.url));
   }
 
   return NextResponse.next();
+
+  // const sessionCookie = getSessionCookie(request, {
+  //   // Optionally pass config if cookie name, prefix or useSecureCookies option is customized in auth config.
+  //   // cookieName: 'session_token',
+  //   // cookiePrefix: 'better-auth',
+  //   // useSecureCookies: true,
+  // });
+
+  // if (!sessionCookie) {
+  //   return NextResponse.redirect(new URL('/sign-in', request.url));
+  // }
+
+  // return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
-  // /dashboard/:path*', 
+  matcher: ['/dashboard/:path*', '/admin/:path*'],
 };
 
 // const publicRoutes = [
