@@ -18,7 +18,8 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/admin/:path*'],
+  matcher: ['/admin/:path*'],
+  // /dashboard/:path*', 
 };
 
 // const publicRoutes = [
