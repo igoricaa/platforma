@@ -5,7 +5,7 @@ import { users } from '@/db/schema';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
-import { hash } from 'bcrypt';
+import { hash } from 'bcryptjs';
 import { nanoid } from 'nanoid';
 
 export default async function NewUserPage() {

@@ -4,8 +4,8 @@ import { eq } from 'drizzle-orm';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
-import { hash } from 'bcrypt';
 import { Suspense } from 'react';
+import { hash } from 'bcryptjs';
 
 // Replace dynamic rendering with fetchCache
 export const fetchCache = 'default-no-store';
